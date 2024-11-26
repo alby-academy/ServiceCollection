@@ -1,13 +1,16 @@
-﻿using ServiceCollection.Abstract;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ServiceCollection.Abstract;
 using ServiceCollection.Senders;
 using ServiceCollection.Services;
 using static System.Console;
 
-ISender telegram = new Telegram();
-ISender mail = new Mail();
+var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+services.AddSingleton<ISender, Telegram>();
+services.AddSingleton<NotifierService>();
+services.AddSingleton<RetrieverService>();
 
-var retriever = new RetrieverService();
-var notifier = new NotifierService(retriever, telegram);
+var provider = services.BuildServiceProvider();
+var notifier = provider.GetRequiredService<NotifierService>();
 
 notifier.NotifyGoodMorning();
 notifier.NotifyGoodNight();
